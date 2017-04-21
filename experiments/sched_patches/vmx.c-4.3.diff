@@ -1,0 +1,21 @@
+--- linux-4.3/arch/x86/kvm/vmx.c	2015-11-02 01:05:25.000000000 +0100
++++ linux-4.3-mod/arch/x86/kvm/vmx.c	2015-12-02 22:48:31.709210997 +0100
+@@ -1256,6 +1256,9 @@
+ 	u64 phys_addr = __pa(vmcs);
+ 	u8 error;
+ 
++	/*TESTING*/
++	current->vmcs_ptr = phys_addr;
++
+ 	asm volatile (__ex(ASM_VMX_VMPTRLD_RAX) "; setna %0"
+ 			: "=qm"(error) : "a"(&phys_addr), "m"(phys_addr)
+ 			: "cc", "memory");
+@@ -9408,7 +9411,7 @@
+ 	/* vmcs12's VM_ENTRY_LOAD_IA32_EFER and VM_ENTRY_IA32E_MODE are
+ 	 * emulated by vmx_set_efer(), below.
+ 	 */
+-	vm_entry_controls_init(vmx, 
++	vm_entry_controls_init(vmx,
+ 		(vmcs12->vm_entry_controls & ~VM_ENTRY_LOAD_IA32_EFER &
+ 			~VM_ENTRY_IA32E_MODE) |
+ 		(vmcs_config.vmentry_ctrl & ~VM_ENTRY_IA32E_MODE));

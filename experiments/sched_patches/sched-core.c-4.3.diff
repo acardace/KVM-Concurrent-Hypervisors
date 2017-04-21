@@ -1,0 +1,31 @@
+--- linux-4.3/kernel/sched/core.c	2015-11-02 01:05:25.000000000 +0100
++++ linux-4.3-mod/kernel/sched/core.c	2015-12-02 23:39:08.143459817 +0100
+@@ -2611,6 +2611,18 @@
+ 		put_user(task_pid_vnr(current), current->set_child_tid);
+ }
+
++/*useful vmx instructions */
++#define ASM_VMPTRLD_RCX       ".byte 0x0f, 0xc7, 0x31\n\t"
++#define ASM_VMPTRST_RAX       ".byte 0x0f, 0xc7, 0x38\n\t"
++
++/*restore current VMCS register*/
++#define RESTORE_CURRENT_VMCS	\
++	asm volatile( \
++	"movq %[current_vmcs], %%rcx\n\t" \
++	ASM_VMPTRLD_RCX			  \
++	: : [current_vmcs] "c" (current->vmcs_ptr) : "cc","memory"\
++	);
++
+ /*
+  * context_switch - switch to the new MM and the new thread's register state.
+  */
+@@ -2653,6 +2665,9 @@
+
+ 	/* Here we just switch the register state and the stack. */
+ 	switch_to(prev, next, prev);
++	/*TESTING, RELOAD CURRENT VMCS*/
++	if( current->vmcs_ptr )
++	    RESTORE_CURRENT_VMCS
+ 	barrier();
+
+ 	return finish_task_switch(prev);

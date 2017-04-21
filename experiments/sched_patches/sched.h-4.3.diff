@@ -1,0 +1,12 @@
+--- linux-4.3/include/linux/sched.h	2015-11-02 01:05:25.000000000 +0100
++++ linux-4.3-mod/include/linux/sched.h	2015-12-02 23:16:18.158416130 +0100
+@@ -1382,6 +1382,9 @@
+ 	unsigned int flags;	/* per process flags, defined below */
+ 	unsigned int ptrace;
+ 
++/*TESTING VMCS LOADING AT CONTEXT SWITCH*/
++	u64 vmcs_ptr;
++
+ #ifdef CONFIG_SMP
+ 	struct llist_node wake_entry;
+ 	int on_cpu;
